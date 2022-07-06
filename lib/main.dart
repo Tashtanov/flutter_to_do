@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_to_do/bloc/task_bloc/task_bloc.dart';
+import 'package:flutter_to_do/model/task.dart';
+
+import 'bloc/bloc_exports.dart';
+import 'screen/task_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  BlocOverrides.runZoned(() => runApp(const MyApp()) );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -10,49 +16,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title:const Text( 'Flutter Demo Home Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              'fdgerwhystrh',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    return BlocProvider(
+      create: (context) => TaskBloc()..add(AddTask(task: Tasks(title: "Task1"))),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        home: TaskScreen(),
       ),
     );
   }
 }
+
+
