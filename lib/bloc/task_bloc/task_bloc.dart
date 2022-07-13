@@ -1,20 +1,46 @@
-import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_to_do/bloc/bloc_exports.dart';
 import 'package:flutter_to_do/model/task.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';
 
-class TaskBloc extends Bloc<TaskEvent, TaskState> {
+class TaskBloc extends HydratedBloc<TaskEvent, TaskState> {
   TaskBloc() : super(const TaskState()) {
     on<AddTask>(_onAddTask);
-    // on<UpdateTask>(_onUpdateTask);
-    // on<DeleteTask>(_onDeleteTask);
+    on<UpdateTask>(_onUpdateTask);
+    on<DeleteTask>(_onDeleteTask);
   }
-  void _onAddTask(AddTask event,emit){
-    final state=this.state;
+
+  void _onAddTask(AddTask event, emit) {
+    final state = this.state;
     emit(TaskState(allTasks: List.from(state.allTasks)..add(event.task)));
+  }
+
+  void _onUpdateTask(UpdateTask event, emit) {
+    final state = this.state;
+    final task = event.task;
+    int index=state.allTasks.indexOf(task);
+    List<Tasks> allTasks = List.from(state.allTasks)..remove(task);
+    task.isDone == false
+        ? allTasks.insert(index,task.copyWith(isDone: true))
+        : allTasks.insert(index,task.copyWith(isDone: false));
+    emit(TaskState(allTasks: allTasks));
+  }
+
+  void _onDeleteTask(DeleteTask event, emit) {
+    final state =this.state;
+    emit(TaskState(allTasks: List.from(state.allTasks)..remove(event.task)));
+  }
+
+  @override
+  TaskState? fromJson(Map<String, dynamic> json) {
+   return TaskState.fromMap(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(TaskState state) {
+    return state.toMap();
   }
 }
